@@ -21,6 +21,12 @@ export const useTodoStore = defineStore('todo', {
         },
         deleteTodo(id) {
             this.todos = this.todos.filter(item => item.id !== id)
+        },
+        updateTodo(index, newTitle, newDate, newDesc, newStatus){
+            this.todos[index].title = newTitle
+            this.todos[index].due_date = newDate
+            this.todos[index].description = newDesc
+            this.todos[index].completed = newStatus
         }
     }
 })
