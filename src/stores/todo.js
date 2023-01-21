@@ -27,6 +27,6 @@ export const useTodoStore = defineStore('todo', {
             this.todos[index].due_date = newDate
             this.todos[index].description = newDesc
             this.todos[index].completed = newStatus
-        }
+        },
     }
 })
