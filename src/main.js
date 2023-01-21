@@ -4,6 +4,8 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+import '../public/reset.css'
+
 import 'v-calendar/dist/style.css';
 
 import VCalendar from 'v-calendar';

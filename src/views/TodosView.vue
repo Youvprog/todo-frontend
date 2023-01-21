@@ -3,44 +3,35 @@
         <div class="form">
             <form class="todo-form" @submit.prevent="addTodo">
                 <h3>File to add your todo</h3>
-                <input placeholder="Todo Title" type="text" class="input" v-model="title" required>
-                <br>
+                <input placeholder="todo title" type="text" class="input" v-model="title" required>
                 <v-date-picker v-model="due_date" :model-config="modelConfig">
                     <template v-slot="{ inputValue, togglePopover }">
                         <div>
-                            <input placeholder="Click to chose a date" class="input" :value="inputValue" readonly @click.prevent="togglePopover"/>
+                            <input placeholder="click to chose a date" class="input" :value="inputValue" readonly @click.prevent="togglePopover"/>
                         </div>
                     </template>
                 </v-date-picker>
-    
-                <br>
-                <textarea class="input" cols="50" rows="10" v-model="description" ></textarea>
-                <br>
-                <br>
+                <textarea class="input" cols="50" rows="10" v-model="description" placeholder="description (optional)" ></textarea>
                 <input type="submit" class="button" value="Add">
-                <br> <br>
             </form>
         </div>
 
-        <div class="todos-container">
+        <div v-if="store.todos.length" class="todos-container">
             <div class="title-todos-container">
                 <h2>Your Todos</h2>
             </div>
-            <div class="todo" v-for="(todo, i) in todos" :key="i">
-                <span class="todo-title" :class="{'finished': todo.completed }" @click="updateTodo(todo.id)">{{ todo.title }}</span>
-                <div class="btn-group">
-                    <button @click="openModalWithData(i)" class="details">
-                        <svg style="width:26px;height:26px" viewBox="0 0 24 24">
-                            <path fill="#fff" d="M6 20H11V22H6C4.89 22 4 21.11 4 20V4C4 2.9 4.89 2 6 2H18C19.11 2 20 2.9 20 4V10.3C19.78 10.42 19.57 10.56 19.39 10.74L18 12.13V4H13V12L10.5 9.75L8 12V4H6V20M22.85 13.47L21.53 12.15C21.33 11.95 21 11.95 20.81 12.15L19.83 13.13L21.87 15.17L22.85 14.19C23.05 14 23.05 13.67 22.85 13.47M13 19.96V22H15.04L21.17 15.88L19.13 13.83L13 19.96Z" />
-                        </svg>
-                    </button>
-                    <button @click="deleteTodo(todo.id)" class="delete">
-                        <svg style="width:26px;height:26px" viewBox="0 0 24 24">
-                            <path fill="#fff" d="M14.12,10.47L12,12.59L9.87,10.47L8.46,11.88L10.59,14L8.47,16.12L9.88,17.53L12,15.41L14.12,17.53L15.53,16.12L13.41,14L15.53,11.88L14.12,10.47M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8,9H16V19H8V9Z" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
+            <ul class="todos-list">
+                <Todo v-for="(todo, i) in todos" 
+                        :todo="todo" 
+                        :key="i" 
+                        @update-todo="updateTodo" 
+                        @delete-todo="deleteTodo" 
+                        @edit-all-info="openModalWithData"
+                />
+            </ul>
+        </div>
+        <div v-else>
+            No tasks left
         </div>
 
         <Modal :open="openModal" @close-modal="openModal = !openModal" width="50%">
@@ -57,7 +48,7 @@
                             </div>
                         </template>
                     </v-date-picker>
-                    <textarea cols="30" rows="10" class="input" v-model="updatedDescription"></textarea>
+                    <textarea  cols="30" rows="10" class="input" v-model="updatedDescription"></textarea>
                     <div>
                         <input type="submit">
                     </div>
@@ -80,15 +71,17 @@ import axios from 'axios'
 import Modal from '../components/Modal.vue'
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../stores/user';
+import Todo from '../components/Todo.vue';
+
 
 const router = useRouter()
 const store = useTodoStore()
 const userStore = useUserStore()
 
+const todoID = ref(null)
 const title = ref('')
 const due_date = ref('')
 const description = ref('')
-const todoId = ref(null)
 const modelConfig = {
     type: 'string',
     mask: 'YYYY-MM-DD',
@@ -98,7 +91,6 @@ const { todos } = storeToRefs(store)
 const updatedTitle = ref('')
 const updatedDue_date = ref('')
 const updatedDescription = ref('')
-const updatedCompletion = ref(null)
 
 
 let openModal = ref(false)
@@ -150,48 +142,69 @@ async function addTodo() {
 
 }
 
-function openModalWithData(index) {
+function openModalWithData(id) {
     openModal.value = !openModal.value
-    todoId.value = todos.value[index].id
 
-    updatedTitle.value =  todos.value[index].title
-    updatedDue_date.value = todos.value[index].due_date
-    updatedDescription.value = todos.value[index].description
-    updatedCompletion.value = todos.value[index].completed === 1 ? true: false
+    const todo = todos.value.find(item => item.id === id)
+    todoID.value = todo.id
+    
+    updatedTitle.value = todo.title
+    updatedDue_date.value = todo.due_date
+    updatedDescription.value = todo.description
+    
 }
 
 
 async function updateTodo(id) {
     store.isLoading = true
-    const index = todos.value.findIndex(item => item.id === todoId.value || id)
-    const updatedTodo = {
-        ...(updatedTitle.value !== '' && {title: updatedTitle.value}),
-        ...(updatedDue_date.value !== '' && {due_date: updatedDue_date.value}),
-        ...(updatedDescription.value !== '' && {description: updatedDescription.value}),
-    }
+    const index = todos.value.findIndex(function(item) {
+        if(typeof id === 'string') {
+            if(item.id === id) return true
+        } else {
+            if(item.id === todoID.value) return true
+        }
+    })
+    let updatedTodo = {}
     if(!openModal.value) {
-        todos.value[index].completed = !todos.value[index].completed
-        updatedTodo.completed = todos.value[index].completed
+        todos.value.forEach(element => {
+            if(element.id === id) {
+                element.completed = element.completed === 0 ? 1 : 0
+                updatedTodo.completed = element.completed
+            }
+        });
+    } else {
+        updatedTodo = {
+            ...(updatedTitle.value !== '' && {title: updatedTitle.value}),
+            ...(updatedDue_date.value !== '' && {due_date: updatedDue_date.value}),
+            ...(updatedDescription.value !== '' && {description: updatedDescription.value}),
+        }
     }
-
-    await axios.patch(`http://localhost:3000/todos/${todoId.value || id}`, updatedTodo, {
+    await axios.patch(`http://localhost:3000/todos/${todoID.value || id}`,updatedTodo, {
+        
         headers: {
             'Authorization': localStorage.getItem('token')
         }
     })
                 .then(res =>{
-                    console.log(res)
-                    store.updateTodo(index, updatedTitle.value || todos.value[index].title,
-                                    updatedDue_date.value || todos.value[index].due_date,
-                                    updatedDescription.value || todos.value[index].description, 
-                                    todos.value[index].completed)
+                    if(!openModal.value) {
+                        store.updateTodo(index, todos.value[index].title,
+                                        todos.value[index].due_date,
+                                        todos.value[index].description,
+                                        todos.value[index].completed)
+                    } else {
+                        store.updateTodo(index, updatedTitle.value, 
+                                        updatedDue_date.value,
+                                        updatedDescription.value,
+                                        todos.value[index].completed)
+                    }
                 })
                 .catch(err =>{
-                    console.log(err)
                     if(err.response.status === 401){
                         axios.defaults.headers.common['Authorization'] = ''
                         userStore.removeToken()
                         router.push('/')
+                    } else {
+                        console.log(err)
                     }
                 })
     store.isLoading = false
@@ -240,6 +253,7 @@ onBeforeMount(()=>{
     text-decoration: line-through;
 }
 .input {
+ margin: 0 0 1rem 0;
  border: none;
  border-radius: 15px;
  padding: 15px;
@@ -265,6 +279,7 @@ textarea {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin: 0 0 2rem 0;
 }
 
 .button {
@@ -313,34 +328,7 @@ textarea {
     margin: 0;
     padding: 1rem;
 }
-.todo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem;
-    margin: 1rem 1rem 1rem 1rem;
-    border-radius: 10px;
-    background: linear-gradient(145deg, #2d3038, #26292f);
-    box-shadow:  5px 5px 23px #111215,
-                -5px -5px 23px #434853;
-}
-.todo-title {
-    cursor: pointer;
-}
-.btn-group {
-    display: flex;
-    gap: 5px;
-}
-.details {
-    cursor: pointer;
-    border: 0;
-    border-radius: 5px;
-    background-color: #23c483;
-}
-.delete {
-    cursor: pointer;
-    border: 0;
-    border-radius: 5px;
-    background-color: #F90403;
+.todos-list {
+    margin: 2rem 0 2rem 0;
 }
 </style>

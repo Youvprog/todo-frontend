@@ -74,9 +74,9 @@ onBeforeMount(() => {
     width: 400px;
     height: 300px;
     border-radius: 25px;
-    background: linear-gradient(145deg, #dddddd, #ffffff);
-    box-shadow:  10px 10px 61px #c9c9c9,
-                -10px -10px 61px #ffffff;
+    background-color: #2A2D34;
+    box-shadow:  5px 5px 7px #20232A,
+                -5px -5px 7px #20232A;
 }
 .title h1 {
     margin: 0 0 2rem 0;
@@ -85,16 +85,18 @@ onBeforeMount(() => {
     padding: 0 0 2rem 0;
 }
 .input {
+ color: #fff;
  border: none;
  padding: 1rem;
  border-radius: 1rem;
- background: #e8e8e8;
- box-shadow: 5px 5px 10px #c5c5c5,
-		-5px -5px 10px #ffffff;
+ background: #2A2D34;
+ box-shadow: 5px 5px 10px #20232A,
+		-5px -5px 10px #20232A;
  transition: 0.3s;
 }
 
 .input:focus {
+ color: #20232A;
  outline-color: #e8e8e8;
  background: #e8e8e8;
  box-shadow: inset 20px 20px 60px #c5c5c5,
@@ -103,23 +105,19 @@ onBeforeMount(() => {
 }
 .login-btn {
   cursor: pointer;
-  color: #090909;
+  color: #fff;
   padding: 0.7em 1.7em;
   font-size: 15px;
   border-radius: 0.5em;
-  background: #e8e8e8;
-  border: 1px solid #e8e8e8;
+  background: #2A2D34;
+  border: 1px solid #2A2D34;
   transition: all .3s;
-  box-shadow: 5px 5px 10px #c5c5c5,
-             -5px -5px 10px #ffffff;
+  box-shadow: 5px 5px 10px #20232A,
+             -5px -5px 10px #20232A;
 }
 
 .login-btn:hover {
-  border: 1px solid white;
+    border: 1px solid #fff;
 }
 
-.login-btn:active {
-  box-shadow: 4px 4px 12px #c5c5c5,
-             -4px -4px 12px #fff;
-}
 </style>

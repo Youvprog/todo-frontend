@@ -20,24 +20,8 @@ if(token) {
 </script>
 
 <template>
-  <main class="main">
     <RouterView />
-  </main>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Montserrat&display=swap');
-
-body {
-  margin: 0;
-}
-
-*{
-    box-sizing: border-box;
-}
-.main {
-  color: #fff;
-  background-color: #2A2D34;
-  font-family: 'Montserrat', sans-serif;
-}
 </style>
