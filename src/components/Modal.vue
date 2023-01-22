@@ -12,12 +12,9 @@
                         modal body
                     </slot> 
                 </section>
-                <!------------
-                <v-divider></v-divider>
-                ------>
                 <footer class="footer">
                     <slot name="modal-footer">
-                        <button @click="$emit('closeModal')">Close</button>
+                        <button class="close-button" @click="$emit('closeModal')">Close</button>
                     </slot>
                 </footer>
             </div>
@@ -49,16 +46,18 @@ const props = defineProps(['open', 'width'])
         width: v-bind(width);
         margin: auto;
         background-color: #fff;
-        border-radius: 2px;
+        border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     }
     .header {
-        background-color: #703EFE;
+        background-color: #F90403;
         margin: 0;
-        padding: 1rem;
+        padding: 1.5rem;
         color: #fff;
+        border-radius: 10px 10px 0 0;
     }
     .body {
+        background-color: #2A2D34;
         padding: 2rem;
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -69,5 +68,21 @@ const props = defineProps(['open', 'width'])
         display: flex;
         gap: 1rem;
         justify-content: flex-end;
+        background-color: #2A2D34;
+        border-top: 2px solid rgb(58, 58, 58);
+        border-radius: 0 0 10px 10px;
     }
+    .close-button {
+        color: #fff;
+        padding: 0.7em 1.7em;
+        border-radius: 10px;
+        background: #F90403;
+        transition: all .3s;
+        cursor: pointer;
+    }
+    .close-button:active{
+        box-shadow: 4px 4px 12px #20232A,
+                    -4px -4px 12px #20232A;
+    }
+   
 </style>

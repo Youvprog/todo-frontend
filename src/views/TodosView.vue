@@ -20,21 +20,31 @@
             <div class="title-todos-container">
                 <h2>Your Todos</h2>
             </div>
-            <ul class="todos-list">
-                <Todo v-for="(todo, i) in todos" 
-                        :todo="todo" 
-                        :key="i" 
+            <draggable
+                v-model="todos"
+                group="todos"
+                item-key="id"
+                class="todos-list"
+                tag="ul"
+                drag-class="drag"
+                ghost-class="ghost"
+                @change="onChange"
+            >
+                <template #item="{element}">
+                    <Todo
+                        :todo="element"
                         @update-todo="updateTodo" 
                         @delete-todo="deleteTodo" 
                         @edit-all-info="openModalWithData"
-                />
-            </ul>
+                    />
+                </template>
+            </draggable>
         </div>
         <div v-else>
-            No tasks left
+            No Todos left
         </div>
 
-        <Modal :open="openModal" @close-modal="openModal = !openModal" width="50%">
+        <Modal :open="openModal" @close-modal="openModal = !openModal" width="30%">
             <template v-slot:modal-header>
                 <h2>Edit todo </h2>
             </template>
@@ -50,15 +60,11 @@
                     </v-date-picker>
                     <textarea  cols="30" rows="10" class="input" v-model="updatedDescription"></textarea>
                     <div>
-                        <input type="submit">
+                        <input class="button" type="submit" value="Save">
                     </div>
                 </form>
-            </template>
-            <template v-slot:modal-footer>
-                <button @click="openModal = !openModal">Close</button>
-            </template>
+            </template>            
         </Modal>
-
 
     </div>
 </template>
@@ -72,7 +78,7 @@ import Modal from '../components/Modal.vue'
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../stores/user';
 import Todo from '../components/Todo.vue';
-
+import draggable from 'vuedraggable'
 
 const router = useRouter()
 const store = useTodoStore()
@@ -107,7 +113,11 @@ async function fetchTodo() {
             todos.value = response.data
         })
         .catch(err=>{
-            console.log(err)
+            if(err.response.status === 404) {
+                    axios.defaults.headers.common['Authorization'] = ''
+                    userStore.removeToken()
+                    router.push('/')
+            }
         })
     store.isLoading = false
 }
@@ -129,7 +139,7 @@ async function addTodo() {
                     title.value = ''
                     due_date.value = ''
                     description.value = ''
-                    store.addTodo(todo)
+                    store.addTodo(res.data.todo)
                 })
                 .catch(err=>{
                     if(err.response.status === 401){
@@ -234,6 +244,45 @@ async function deleteTodo(id) {
     store.isLoading = true
 }
 
+async function onChange(e) {
+    let item = e.moved
+    if(!item) return
+    
+    let index = item.newIndex
+    let prevTodo = todos.value[index - 1]
+    let currentTodo = todos.value[index]
+    let nextTodo = todos.value[index + 1]
+
+    let position = currentTodo.position
+
+    if(prevTodo && nextTodo) {
+        position = (prevTodo.position + nextTodo.position) / 2
+    } else if(nextTodo) {
+        position = prevTodo.position + (prevTodo.position / 2)
+    } else if(prevTodo) {
+        position = nextTodo.position / 2
+    }
+
+    await axios.patch(`http://localhost:3000/todos/${currentTodo.id}`, { position },{
+                headers: {
+                    'Authorization': localStorage.getItem('token')
+                }
+    })          .then(res => {
+                    console.log(res)
+                    store.todos[index].position = position
+                })
+                .catch(err => {
+                    if(err.response.status === 401){
+                        axios.defaults.headers.common['Authorization'] = ''
+                        userStore.removeToken()
+                        router.push('/')
+                    } else {
+                        console.log(err)
+                    }
+                })
+
+}
+
 onBeforeMount(()=>{
     watchEffect(() => {
         fetchTodo()
@@ -331,4 +380,5 @@ textarea {
 .todos-list {
     margin: 2rem 0 2rem 0;
 }
+
 </style>

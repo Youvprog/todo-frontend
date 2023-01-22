@@ -1,9 +1,6 @@
 <template>
     <div class="wrapper">
-        <form @submit.prevent="registerUser">
-            <input type="email" v-model="userEmail">
-            <input type="submit">
-        </form>
+        <UserForm v-model="userEmail" form-type="Register" @submit-form="registerUser"/>
     </div>
 </template>
 
@@ -11,11 +8,14 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
+import UserForm from '../components/UserForm.vue';
+
 
 const router = useRouter()
 const userEmail = ref('')
 
 async function registerUser() {
+    if(userEmail.value === '') return
     const user = {
         email: userEmail.value
     }
@@ -33,5 +33,10 @@ async function registerUser() {
 </script>
 
 <style scoped>
-
+.wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 </style>

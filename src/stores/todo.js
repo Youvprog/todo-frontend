@@ -11,7 +11,7 @@ export const useTodoStore = defineStore('todo', {
     },
     actions: {
         addTodo(todo){
-            this.todos.push(todo)
+            this.todos.unshift(todo)
         },
         toggleCompleted(id) {
             const todo = this.todos.find(item => item.id === id)

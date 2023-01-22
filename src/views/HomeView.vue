@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useUserStore } from '../stores/user';
 import { ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
-
+import UserForm from '../components/UserForm.vue';
 
 
 const router = useRouter()
@@ -42,19 +42,7 @@ onBeforeMount(() => {
 
 <template>
     <div class="wrapper">
-        <div class="login-form">
-            <div class="title">
-                <h1>Login</h1>
-            </div>
-            <form class="form" @submit.prevent="loginUser">
-                <div class="input-group">
-                    <input type="text" class="input" placeholder="Email Address" v-model="loggedEmail">
-                </div>
-                <div class="btn">
-                    <input class="login-btn" type="submit" value="Login">
-                </div>
-            </form>
-        </div>
+        <UserForm v-model="loggedEmail" form-type="Login" @submit-form="loginUser"/>
     </div>
 </template>
 
@@ -119,5 +107,12 @@ onBeforeMount(() => {
 .login-btn:hover {
     border: 1px solid #fff;
 }
-
+.link-register {
+    margin: 2rem 0 0 0;
+    font-size: 13px;
+}
+.link {
+    text-decoration: none;
+    color: aqua;
+}
 </style>
