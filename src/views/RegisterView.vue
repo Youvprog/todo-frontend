@@ -6,13 +6,15 @@
 
 <script setup>
 import axios from 'axios';
-import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router'
 import UserForm from '../components/UserForm.vue';
-
+import { useUserStore } from '../stores/user';
 
 const router = useRouter()
 const userEmail = ref('')
+const store = useUserStore()
 
 async function registerUser() {
     if(userEmail.value === '') return
@@ -29,6 +31,10 @@ async function registerUser() {
                     console.log(err)
                 })
 }
+
+onBeforeMount(() => {
+    if(store.isAuthenticated) router.push('/todos')
+})
 
 </script>
 

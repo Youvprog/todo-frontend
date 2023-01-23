@@ -24,6 +24,7 @@
 <script setup>
 
 const props = defineProps(['todo'])
+const emits = defineEmits(['updateTodo', 'editAllInfo', 'deleteTodo'])
 
 </script>
 
@@ -36,8 +37,8 @@ const props = defineProps(['todo'])
     margin: 1rem 1rem 1rem 1rem;
     border-radius: 10px;
     background: linear-gradient(145deg, #2d3038, #26292f);
-    box-shadow:  5px 5px 23px #111215,
-                -5px -5px 23px #434853;
+    box-shadow:  5px 5px 23px var(--todos-container-sd),
+                -5px -5px 23px var(--todos-container-sd2);
 }
 .todo-infos {
     display: flex;
@@ -61,19 +62,19 @@ const props = defineProps(['todo'])
     cursor: pointer;
     border: 0;
     border-radius: 5px;
-    background-color: #23c483;
+    background-color: var(--btn-add-bg-hover-color);
 }
 .delete {
     cursor: pointer;
     border: 0;
     border-radius: 5px;
-    background-color: #F90403;
+    background-color: var(--red-color);
 }
 .drag > div{
     transform: rotate(5deg);
 }
 .ghost {
-    background-color: #434853;
+    background-color: var(--todos-container-sd2);
     border-radius: 10px;
 }
 .ghost > div {

@@ -44,9 +44,9 @@ const loggedEmail = ref('')
     width: 400px;
     height: 300px;
     border-radius: 25px;
-    background-color: #2A2D34;
-    box-shadow:  5px 5px 7px #20232A,
-                -5px -5px 7px #20232A;
+    background-color: var(--bg-dark-color);
+    box-shadow:  5px 5px 7px var(--dark-shadow-color),
+                -5px -5px 7px var(--dark-shadow-color);
 }
 .title h1 {
     margin: 0 0 2rem 0;
@@ -55,35 +55,35 @@ const loggedEmail = ref('')
     padding: 0 0 2rem 0;
 }
 .input {
- color: #fff;
+ color: var(--white-color);
  border: none;
  padding: 1rem;
  border-radius: 1rem;
- background: #2A2D34;
- box-shadow: 5px 5px 10px #20232A,
-		-5px -5px 10px #20232A;
+ background: var(--bg-dark-color);
+ box-shadow: 5px 5px 10px var(--dark-shadow-color),
+		-5px -5px 10px var(--dark-shadow-color);
  transition: 0.3s;
 }
 
 .input:focus {
- color: #20232A;
+ color: var(--dark-shadow-color);
  outline-color: #e8e8e8;
  background: #e8e8e8;
  box-shadow: inset 20px 20px 60px #c5c5c5,
-		inset -20px -20px 60px #ffffff;
+		inset -20px -20px 60px var(--white-color);
  transition: 0.3s;
 }
 .login-btn {
   cursor: pointer;
-  color: #fff;
+  color: var(--white-color);
   padding: 0.7em 1.7em;
   font-size: 15px;
   border-radius: 0.5em;
-  background: #2A2D34;
-  border: 1px solid #2A2D34;
+  background: var(--bg-dark-color);
+  border: 1px solid var(--bg-dark-color);
   transition: all .3s;
-  box-shadow: 5px 5px 10px #20232A,
-             -5px -5px 10px #20232A;
+  box-shadow: 5px 5px 10px var(--dark-shadow-color),
+             -5px -5px 10px var(--dark-shadow-color);
 }
 
 .login-btn:hover {

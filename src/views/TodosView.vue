@@ -16,7 +16,7 @@
             </form>
         </div>
 
-        <div v-if="store.todos.length" class="todos-container">
+        <div v-if="store.todosCount" class="todos-container">
             <div class="title-todos-container">
                 <h2>Your Todos</h2>
             </div>
@@ -257,10 +257,13 @@ async function onChange(e) {
 
     if(prevTodo && nextTodo) {
         position = (prevTodo.position + nextTodo.position) / 2
+        
     } else if(nextTodo) {
-        position = prevTodo.position + (prevTodo.position / 2)
+        position = nextTodo.position + (nextTodo.position / 2)
+        
     } else if(prevTodo) {
-        position = nextTodo.position / 2
+        position = prevTodo.position / 2
+        
     }
 
     await axios.patch(`http://localhost:3000/todos/${currentTodo.id}`, { position },{
@@ -298,30 +301,25 @@ onBeforeMount(()=>{
     justify-content: center;
     align-items: center;
 }
-.finished {
-    text-decoration: line-through;
-}
 .input {
  margin: 0 0 1rem 0;
  border: none;
  border-radius: 15px;
  padding: 15px;
- background-color: #2A2D34;
- box-shadow: 6px 6px 12px #20232A,
-             -6px -6px 12px #20232A;
+ background-color: var(--bg-dark-color);
+ box-shadow: 6px 6px 12px var(--dark-shadow-color),
+             -6px -6px 12px var(--dark-shadow-color);
  font-size: medium;
  font-weight: bold;
  max-width: 200px;
- color: #fff
+ color: var(--white-color);
 }
 
 .input:focus {
- outline-color: white;
+ outline-color: var(--white-color);
  place-content: "Enter your message!";
 }
-textarea {
-    resize: none;
-}
+
 
 .todo-form {
     display: flex;
@@ -337,20 +335,20 @@ textarea {
   text-transform: uppercase;
   letter-spacing: 2.5px;
   font-weight: 500;
-  color: #000;
-  background-color: #fff;
+  color: var(--black-color);
+  background-color: var(--white-color);
   border: none;
   border-radius: 45px;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 8px 15px var(--btn-add-shadow-color);
   transition: all 0.3s ease 0s;
   cursor: pointer;
   outline: none;
 }
 
 .button:hover {
-  background-color: #23c483;
-  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
-  color: #fff;
+  background-color: var(--btn-add-bg-hover-color);
+  box-shadow: 0px 15px 20px var(--btn-add-shadow-hover);
+  color: var(--white-color);
   transform: translateY(-7px);
 }
 
@@ -361,16 +359,16 @@ textarea {
     width: 350px;
     margin: 2rem 0 2rem 0;
     border-radius: 10px;
-    background: #2A2D34;
-    box-shadow:  5px 5px 10px #111215,
-                -5px -5px 10px #434853;
+    background: var(--bg-dark-color);
+    box-shadow:  5px 5px 10px var(--todos-container-sd),
+                -5px -5px 10px var(--todos-container-sd2);
     z-index: 999;
 }
 
 .title-todos-container {
     display: flex;
     justify-content: center;
-    background-color: #F90403;
+    background-color: var(--red-color);
     border-radius: 10px 10px 0 0;
 }
 .title-todos-container h2 {
