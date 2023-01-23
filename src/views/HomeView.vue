@@ -9,6 +9,7 @@ import UserForm from '../components/UserForm.vue';
 const router = useRouter()
 const store = useUserStore()
 const loggedEmail = ref('')
+const errors = ref(null)
 
 
 async function loginUser() {
@@ -29,7 +30,8 @@ async function loginUser() {
                     router.push('/todos')
                 })
                 .catch(err => {
-                    console.log(err)
+                    errors.value = err.response
+                   
                 })
     store.isLoading = false
 }
@@ -42,7 +44,7 @@ onBeforeMount(() => {
 
 <template>
     <div class="wrapper">
-        <UserForm v-model="loggedEmail" form-type="Login" @submit-form="loginUser"/>
+        <UserForm v-model="loggedEmail" form-type="Login" @submit-form="loginUser" :errors="errors"/>
     </div>
 </template>
 

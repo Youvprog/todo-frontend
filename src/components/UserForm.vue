@@ -4,11 +4,12 @@
             <h1>{{ props.formType }}</h1>
         </div>
         <form class="form" @submit.prevent="$emit('submitForm')">
+            <p class="errors" v-if="errors">{{ errors.data }}</p>
             <div class="input-group">
                 <input type="text" class="input" placeholder="Email Address" v-model="loggedEmail" @input="$emit('update:modelValue', $event.target.value)">
             </div>
             <div class="btn">
-                <input class="login-btn" type="submit" value="Login">
+                <input class="login-btn" type="submit" :value="props.formType === 'Login'?'Login': 'Sign up'">
             </div>
         </form>
         <p class="link-register" v-if="props.formType === 'Login'">
@@ -25,7 +26,8 @@ import { ref } from 'vue';
 
 const props = defineProps({
     modelValue: String,
-    formType: String
+    formType: String,
+    errors: Object
 })
 
 const emit = defineEmits(['update:modelValue', 'submitForm'])
@@ -49,7 +51,7 @@ const loggedEmail = ref('')
                 -5px -5px 7px var(--dark-shadow-color);
 }
 .title h1 {
-    margin: 0 0 2rem 0;
+    margin: 0 0 1rem 0;
 }
 .input-group {
     padding: 0 0 2rem 0;
@@ -96,6 +98,11 @@ const loggedEmail = ref('')
 .link {
     text-decoration: none;
     color: aqua;
+}
+.errors {
+    color: var(--red-color);
+    padding: 0.5rem;
+    font-size: 13px;
 }
 
 </style>

@@ -28,7 +28,9 @@ body {
     color: var(--white-color);
     background-color: var(--bg-dark-color);
 }
-
+p {
+  margin: 0;
+}
 ul {
   list-style: none;
   padding: 0;

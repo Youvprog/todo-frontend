@@ -1,12 +1,11 @@
 <template>
     <div class="wrapper">
-        <UserForm v-model="userEmail" form-type="Register" @submit-form="registerUser"/>
+        <UserForm v-model="userEmail" form-type="Register" @submit-form="registerUser" :errors="errors"/>
     </div>
 </template>
 
 <script setup>
 import axios from 'axios';
-import { storeToRefs } from 'pinia';
 import { ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router'
 import UserForm from '../components/UserForm.vue';
@@ -15,9 +14,15 @@ import { useUserStore } from '../stores/user';
 const router = useRouter()
 const userEmail = ref('')
 const store = useUserStore()
+const errors = ref({})
+
 
 async function registerUser() {
     if(userEmail.value === '') return
+    if(!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(userEmail.value)) {
+        errors.value.data = 'Invalid Email'
+        return 
+    }
     const user = {
         email: userEmail.value
     }
@@ -28,7 +33,7 @@ async function registerUser() {
                     router.push('/')
                 })
                 .catch(err => {
-                    console.log(err)
+                    errors.value = err.response
                 })
 }
 
